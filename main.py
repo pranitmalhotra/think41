@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import pymongo
 import os
 from dotenv import load_dotenv
+from scalar_fastapi import get_scalar_api_reference
 
 app = FastAPI()
 
@@ -38,6 +39,13 @@ class Item(BaseModel):
 @app.get("/")
 async def root():
     return {"message": "Hello from FastAPI and MongoDB!"}
+
+@app.get("/scalar", include_in_schema=False)
+async def scalar_html():
+    return get_scalar_api_reference(
+        openapi_url=app.openapi_url,
+        title=app.title,
+    )
 
 @app.post("/items/", response_model=Item, status_code=201)
 async def create_item(item: Item):
